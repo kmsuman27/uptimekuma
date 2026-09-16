@@ -24,17 +24,19 @@
 
                     <!-- Bulk Import -->
                     <button
-                        type="button"
-                        class="hub-btn"
-                    >
-                        <span class="button-icon">☰</span>
-                        <span>Bulk Import</span>
-                    </button>
+    class="hub-btn"
+    type="button"
+    @click="showBulkImportModal = true"
+>
+    <font-awesome-icon icon="upload" />
+    Bulk Import
+</button>
 
                     <!-- CSV Upload -->
                     <button
                         type="button"
                         class="hub-btn"
+                        @click="showCSVImportModal = true"
                     >
                         <span class="button-icon">↑</span>
                         <span>CSV Upload</span>
@@ -300,6 +302,16 @@
 
     <!-- Child Routes -->
     <router-view ref="child" />
+    <BulkImportModal
+    :show="showBulkImportModal"
+    @close="showBulkImportModal = false"
+    @imported="handleBulkImportResult"
+/>
+<CSVImportModal
+    :show="showCSVImportModal"
+    @close="showCSVImportModal = false"
+    @imported="handleCSVImportResult"
+/>
 </template>
 
 
@@ -308,6 +320,8 @@ import Status from "../components/Status.vue";
 import Datetime from "../components/Datetime.vue";
 import Pagination from "v-pagination-3";
 import Confirm from "../components/Confirm.vue";
+import BulkImportModal from "../components/BulkImportModal.vue";
+import CSVImportModal from "../components/CSVImportModal.vue";
 
 export default {
     components: {
@@ -315,6 +329,8 @@ export default {
         Status,
         Pagination,
         Confirm,
+        BulkImportModal,
+        CSVImportModal,
     },
 
     props: {
@@ -336,8 +352,10 @@ export default {
                 hideCount: true,
                 chunksNavigation: "scroll",
             },
-
+            showBulkImportModal: false,
+            showCSVImportModal: false,
             importantHeartBeatListLength: 0,
+            
 
             displayedRecords: [],
 
@@ -631,7 +649,7 @@ export default {
 
             } else {
 
-                this.$root.toastError(
+                             this.$root.toastError(
                     this.$t(
                         "Could not clear events",
                         {
@@ -642,11 +660,41 @@ export default {
                 );
             }
         },
-    },
+
+       handleBulkImportResult(result) {
+    this.showBulkImportModal = false;
+
+    if (result.successCount > 0) {
+        this.$root.toastSuccess(
+            `${result.successCount} monitor(s) imported successfully`
+        );
+    }
+
+    if (result.failedCount > 0) {
+        this.$root.toastError(
+            `${result.failedCount} monitor(s) failed to import`
+        );
+    }
+},
+
+handleCSVImportResult(result) {
+    this.showCSVImportModal = false;
+
+    if (result.successCount > 0) {
+        this.$root.toastSuccess(
+            `${result.successCount} monitor(s) imported successfully`
+        );
+    }
+
+    if (result.failedCount > 0) {
+        this.$root.toastError(
+            `${result.failedCount} monitor(s) failed to import`
+        );
+    }
+},
+},
 };
 </script>
-
-
 <style lang="scss" scoped>
 @import "../assets/vars";
 

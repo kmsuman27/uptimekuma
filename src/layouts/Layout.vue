@@ -12,110 +12,32 @@
             </div>
         </div>
 
-        <!-- Desktop header -->
-        <header v-if="!$root.isMobile" class="d-flex flex-wrap justify-content-center py-3 mb-3 border-bottom">
-            <router-link
-                to="/dashboard"
-                class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
-            >
-                <object class="bi me-2 ms-4" width="40" height="40" data="/icon.svg" />
-                <span class="fs-4 title">{{ $t("Uptime Kuma") }}</span>
-            </router-link>
+        <!-- Desktop sidebar -->
+<aside v-if="!$root.isMobile" class="app-sidebar">
 
-            <a
-                v-if="hasNewVersion"
-                target="_blank"
-                href="https://github.com/louislam/uptime-kuma/releases"
-                class="btn btn-primary me-3"
-            >
-                <font-awesome-icon icon="arrow-alt-circle-up" />
-                {{ $t("New Update") }}
-            </a>
+    <!-- Logo -->
+    <router-link to="/dashboard" class="sidebar-logo-link">
+        <object
+            class="sidebar-logo"
+            width="40"
+            height="40"
+            data="/icon.svg"
+        />
+    </router-link>
 
-            <ul class="nav nav-pills">
-                <li v-if="$root.loggedIn" class="nav-item me-2">
-                    <router-link to="/manage-status-page" class="nav-link">
-                        <font-awesome-icon icon="stream" />
-                        {{ $t("Status Pages") }}
-                    </router-link>
-                </li>
-                <li v-if="$root.loggedIn" class="nav-item me-2">
-                    <router-link to="/dashboard" class="nav-link">
-                        <font-awesome-icon icon="tachometer-alt" />
-                        {{ $t("Dashboard") }}
-                    </router-link>
-                </li>
-                <li v-if="$root.loggedIn" class="nav-item">
-                    <div class="dropdown dropdown-profile-pic">
-                        <div class="nav-link" data-bs-toggle="dropdown">
-                            <div class="profile-pic">{{ $root.usernameFirstChar }}</div>
-                            <font-awesome-icon icon="angle-down" />
-                        </div>
+    <!-- Navigation -->
+    <nav class="sidebar-nav">
+        <router-link
+            to="/dashboard"
+            class="sidebar-nav-link"
+            :class="{ active: $route.path.startsWith('/dashboard') }"
+        >
+            <font-awesome-icon icon="tachometer-alt" />
+            <span>Uptime Monitor</span>
+        </router-link>
+    </nav>
 
-                        <!-- Header's Dropdown Menu -->
-                        <ul class="dropdown-menu">
-                            <!-- Username -->
-                            <li>
-                                <i18n-t
-                                    v-if="$root.username != null"
-                                    tag="span"
-                                    keypath="signedInDisp"
-                                    class="dropdown-item-text"
-                                >
-                                    <strong>{{ $root.username }}</strong>
-                                </i18n-t>
-                                <span v-if="$root.username == null" class="dropdown-item-text">
-                                    {{ $t("signedInDispDisabled") }}
-                                </span>
-                            </li>
-
-                            <li><hr class="dropdown-divider" /></li>
-
-                            <!-- Functions -->
-                            <li>
-                                <router-link
-                                    to="/maintenance"
-                                    class="dropdown-item"
-                                    :class="{ active: $route.path.includes('manage-maintenance') }"
-                                >
-                                    <font-awesome-icon icon="wrench" />
-                                    {{ $t("Maintenance") }}
-                                </router-link>
-                            </li>
-
-                            <li>
-                                <router-link
-                                    to="/settings/general"
-                                    class="dropdown-item"
-                                    :class="{ active: $route.path.includes('settings') }"
-                                >
-                                    <font-awesome-icon icon="cog" />
-                                    {{ $t("Settings") }}
-                                </router-link>
-                            </li>
-
-                            <li>
-                                <a
-                                    href="https://github.com/louislam/uptime-kuma/wiki"
-                                    class="dropdown-item"
-                                    target="_blank"
-                                >
-                                    <font-awesome-icon icon="info-circle" />
-                                    {{ $t("Help") }}
-                                </a>
-                            </li>
-
-                            <li v-if="$root.loggedIn">
-                                <button class="dropdown-item" @click="$root.logout">
-                                    <font-awesome-icon icon="sign-out-alt" />
-                                    {{ $t("Logout") }}
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </header>
+</aside>
 
         <!-- Mobile header -->
         <header v-else class="d-flex flex-wrap justify-content-center pt-2 pb-2 mb-3">
@@ -125,10 +47,10 @@
             </router-link>
         </header>
 
-        <main>
-            <router-view v-if="$root.loggedIn" />
-            <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
-        </main>
+        <main :class="{ 'with-sidebar': !$root.isMobile }">
+    <router-view v-if="$root.loggedIn" />
+    <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
+</main>
 
         <!-- Mobile Only -->
         <div v-if="$root.isMobile" style="width: 100%; height: calc(60px + env(safe-area-inset-bottom))" />
@@ -239,6 +161,76 @@ export default {
 
 <style lang="scss" scoped>
 @import "../assets/vars.scss";
+.app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100vh;
+
+    background-color: #ffffff;
+    border-right: 1px solid #e9ecef;
+
+    display: flex;
+    flex-direction: column;
+
+    z-index: 1000;
+}
+
+.sidebar-logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 80px;
+
+    text-decoration: none;
+}
+
+.sidebar-logo {
+    display: block;
+}
+
+.sidebar-nav {
+    padding: 10px 12px;
+}
+
+.sidebar-nav-link {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+    padding: 11px 14px;
+
+    border-radius: 8px;
+
+    color: #495057;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.sidebar-nav-link:hover {
+    background-color: #f1f3f5;
+}
+
+.sidebar-nav-link.active {
+    background-color: $primary;
+    color: #fff;
+}
+
+.sidebar-nav-link svg {
+    width: 16px;
+    height: 16px;
+}
 
 .nav-link {
     &:hover {
@@ -299,7 +291,12 @@ export default {
 }
 
 main {
-    min-height: calc(100vh - 160px);
+    min-height: 100vh;
+}
+
+main.with-sidebar {
+    margin-left: 230px;
+    min-height: 100vh;
 }
 
 .title {
@@ -395,10 +392,20 @@ main {
 }
 
 .dark {
-    header {
-        background-color: $dark-header-bg;
-        border-bottom-color: $dark-header-bg !important;
+    .app-sidebar {
+        background-color: $dark-bg;
+        border-right-color: $dark-border-color;
+    }
 
+    .sidebar-nav-link {
+        color: $dark-font-color;
+    }
+
+    .sidebar-nav-link:hover {
+        background-color: $dark-bg2;
+    }
+
+    header {
         span {
             color: #f0f6fc;
         }
