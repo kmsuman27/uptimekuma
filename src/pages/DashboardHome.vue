@@ -587,7 +587,7 @@ export default {
         /*
          * Clear events
          */
-        clearAllEvents() {
+        async clearAllEvents() {
 
             this.clearingAllEvents = true;
 
@@ -612,32 +612,39 @@ export default {
                 return;
             }
 
-            monitorIDs.forEach(
-                (monitorID) => {
+           await Promise.all(
+    monitorIDs.map(
+        (monitorID) => {
+            return new Promise((resolve) => {
+                this.$root
+                    .getSocket()
+                    .emit(
+                        "clearEvents",
+                        monitorID,
+                        (res) => {
 
-                    this.$root
-                        .getSocket()
-                        .emit(
-                            "clearEvents",
-                            monitorID,
-                            (res) => {
-
-                                if (
-                                    !res ||
-                                    !res.ok
-                                ) {
-                                    failed++;
-                                }
+                            if (
+                                !res ||
+                                !res.ok
+                            ) {
+                                failed++;
                             }
-                        );
-                }
-            );
 
-            this.clearingAllEvents = false;
+                            resolve();
+                        }
+                    );
+            });
+        }
+    )
+);
 
-            this.page = 1;
+this.clearingAllEvents = false;
 
-            this.getImportantHeartbeatListLength();
+this.page = 1;
+
+this.importantHeartBeatListLength = 0;
+
+this.displayedRecords = [];
 
             if (failed === 0) {
 
