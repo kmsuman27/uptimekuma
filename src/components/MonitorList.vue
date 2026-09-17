@@ -106,7 +106,7 @@
             </div>
 
             <MonitorListItem
-                v-for="item in sortedMonitorList"
+                v-for="item in paginatedMonitorList"
                 :key="`${item.id}-${collapseKey}`"
                 :monitor="item"
                 :isSelectMode="selectMode"
@@ -116,6 +116,29 @@
                 :filter-func="filterFunc"
                 :sort-func="sortFunc"
             />
+        </div>
+        <div class="pagination-footer">
+            <div class="pagination-info">
+                Showing {{ paginationStart }}–{{ paginationEnd }} of {{ sortedMonitorList.length }} monitors
+            </div>
+
+            <div class="pagination-controls">
+                <button class="pagination-button" :disabled="currentPage === 1" @click="currentPage--">&lt;</button>
+
+                <button
+                    v-for="page in totalPages"
+                    :key="page"
+                    class="pagination-button"
+                    :class="{ active: currentPage === page }"
+                    @click="currentPage = page"
+                >
+                    {{ page }}
+                </button>
+
+                <button class="pagination-button" :disabled="currentPage === totalPages" @click="currentPage++">
+                    &gt;
+                </button>
+            </div>
         </div>
     </div>
 
@@ -155,12 +178,18 @@ export default {
             selectedMonitors: {},
             windowTop: 0,
             bulkActionInProgress: false,
+
             filterState: {
                 status: null,
                 active: null,
                 tags: null,
             },
+
             collapseKey: 0,
+
+            // Pagination
+            currentPage: 1,
+            itemsPerPage: 30,
         };
     },
     computed: {
@@ -203,26 +232,47 @@ export default {
 
             return result;
         },
+        paginatedMonitorList() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+
+            return this.sortedMonitorList.slice(start, end);
+        },
+
+        totalPages() {
+            return Math.ceil(this.sortedMonitorList.length / this.itemsPerPage);
+        },
+
+        paginationStart() {
+            if (this.sortedMonitorList.length === 0) {
+                return 0;
+            }
+
+            return (this.currentPage - 1) * this.itemsPerPage + 1;
+        },
+
+        paginationEnd() {
+            return Math.min(this.currentPage * this.itemsPerPage, this.sortedMonitorList.length);
+        },
 
         isDarkTheme() {
             return document.body.classList.contains("dark");
         },
 
         monitorListStyle() {
-            // The header height has to be changed in case it is modified in the future.
-            // +10px is the margin-bottom of the header
             let listHeaderHeight = 58 + 10;
 
-            // Only add extra height when selection row is visible
             if (this.selectMode && this.selectedMonitorCount > 0) {
                 listHeaderHeight += 42;
             }
 
+            // Reserve space for pagination footer
+            const paginationFooterHeight = 54;
+
             return {
-                height: `calc(100% - ${listHeaderHeight}px)`,
+                height: `calc(100% - ${listHeaderHeight + paginationFooterHeight}px)`,
             };
         },
-
         selectedMonitorCount() {
             return Object.keys(this.selectedMonitors).length;
         },
@@ -838,6 +888,74 @@ export default {
             margin-left: 0;
             width: 100%;
             margin-top: 0.25rem;
+        }
+    }
+}
+
+/* Pagination */
+
+.pagination-footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-top: 1px solid #dee2e6;
+    background: #ffffff;
+    gap: 14px;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #6c757d;
+    white-space: nowrap;
+    margin-right: 2px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pagination-button {
+    min-width: 34px;
+    height: 32px;
+    padding: 4px 8px;
+    border: 1px solid #dee2e6;
+    background: #ffffff;
+    color: #495057;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+
+    &:hover:not(:disabled) {
+        background: #f1f3f5;
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &.active {
+        background: $primary;
+        border-color: $primary;
+        color: #ffffff;
+    }
+
+    .dark & {
+        background: $dark-bg;
+        border-color: $dark-border-color;
+        color: $dark-font-color;
+
+        &:hover:not(:disabled) {
+            background: $dark-bg2;
+        }
+
+        &.active {
+            background: $primary;
+            border-color: $primary;
+            color: #ffffff;
         }
     }
 }
