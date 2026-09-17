@@ -614,6 +614,13 @@ export default {
     height: calc(100vh - 150px);
     position: sticky;
     top: 10px;
+    overflow: hidden;
+}
+
+.monitor-list {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100% - 68px);
 }
 
 .small-padding {
