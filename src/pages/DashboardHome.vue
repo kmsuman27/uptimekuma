@@ -43,13 +43,7 @@
                     </button>
 
                     <!-- Templates -->
-                    <button
-                        type="button"
-                        class="hub-btn"
-                    >
-                        <span class="button-icon">▦</span>
-                        <span>Templates</span>
-                    </button>
+                    
 
                 </div>
 
