@@ -13,40 +13,38 @@
         </div>
 
         <!-- Desktop sidebar -->
-<aside v-if="!$root.isMobile" class="app-sidebar">
+        <aside v-if="!$root.isMobile" class="app-sidebar">
+            <!-- Logo -->
+            <router-link to="/dashboard" class="sidebar-logo-link">
+                <object class="sidebar-logo" width="40" height="40" data="/icon.svg" />
+            </router-link>
 
-    <!-- Logo -->
-    <router-link to="/dashboard" class="sidebar-logo-link">
-        <object
-            class="sidebar-logo"
-            width="40"
-            height="40"
-            data="/icon.svg"
-        />
-    </router-link>
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <router-link
+                    to="/dashboard"
+                    class="sidebar-nav-link"
+                    :class="{ active: $route.path.startsWith('/dashboard') }"
+                >
+                    <font-awesome-icon icon="tachometer-alt" />
+                    <span>Uptime Monitor</span>
+                </router-link>
 
-    <!-- Navigation -->
-   <nav class="sidebar-nav">
-    <router-link
-        to="/dashboard"
-        class="sidebar-nav-link"
-        :class="{ active: $route.path.startsWith('/dashboard') }"
-    >
-        <font-awesome-icon icon="tachometer-alt" />
-        <span>Uptime Monitor</span>
-    </router-link>
+                <router-link to="/list" class="sidebar-nav-link" :class="{ active: $route.path.startsWith('/list') }">
+                    <font-awesome-icon icon="list" />
+                    <span>Monitors</span>
+                </router-link>
 
-    <router-link
-        to="/list"
-        class="sidebar-nav-link"
-        :class="{ active: $route.path.startsWith('/list') }"
-    >
-        <font-awesome-icon icon="list" />
-        <span>Monitors</span>
-    </router-link>
-</nav>
-
-</aside>
+                <router-link
+                    to="/settings"
+                    class="sidebar-nav-link"
+                    :class="{ active: $route.path.startsWith('/settings') }"
+                >
+                    <font-awesome-icon icon="cog" />
+                    <span>Settings</span>
+                </router-link>
+            </nav>
+        </aside>
 
         <!-- Mobile header -->
         <header v-else class="d-flex flex-wrap justify-content-center pt-2 pb-2 mb-3">
@@ -57,9 +55,9 @@
         </header>
 
         <main :class="{ 'with-sidebar': !$root.isMobile }">
-    <router-view v-if="$root.loggedIn" />
-    <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
-</main>
+            <router-view v-if="$root.loggedIn" />
+            <Login v-if="!$root.loggedIn && $root.allowLoginDialog" />
+        </main>
 
         <!-- Mobile Only -->
         <div v-if="$root.isMobile" style="width: 100%; height: calc(60px + env(safe-area-inset-bottom))" />
