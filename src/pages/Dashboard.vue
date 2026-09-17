@@ -1,15 +1,14 @@
 <template>
     <div class="container-fluid">
         <div class="row">
-
             <!-- Monitor List -->
             <div
                 v-if="
-    !$root.isMobile &&
-    $route.name !== 'DashboardHome' &&
-    $route.path !== '/list' &&
-    $route.path !== '/add'
-"
+                    !$root.isMobile &&
+                    $route.name !== 'DashboardHome' &&
+                    $route.path !== '/list' &&
+                    $route.path !== '/add'
+                "
                 class="col-12 col-md-5 col-xl-4 ps-0"
             >
                 <div>
@@ -26,18 +25,14 @@
             <div
                 ref="container"
                 :class="[
-                    $route.name === 'DashboardHome'
+                    $route.name === 'DashboardHome' || $route.path === '/list' || $route.path === '/add'
                         ? 'col-12 mb-3 gx-0'
-                        : 'col-12 col-md-7 col-xl-8 mb-3 gx-0'
+                        : 'col-12 col-md-7 col-xl-8 mb-3 gx-0',
                 ]"
             >
                 <!-- Add :key to disable vue router re-use the same component -->
-                <router-view
-                    :key="$route.fullPath"
-                    :calculatedHeight="height"
-                />
+                <router-view :key="$route.fullPath" :calculatedHeight="height" />
             </div>
-
         </div>
     </div>
 </template>
