@@ -26,16 +26,25 @@
     </router-link>
 
     <!-- Navigation -->
-    <nav class="sidebar-nav">
-        <router-link
-            to="/dashboard"
-            class="sidebar-nav-link"
-            :class="{ active: $route.path.startsWith('/dashboard') }"
-        >
-            <font-awesome-icon icon="tachometer-alt" />
-            <span>Uptime Monitor</span>
-        </router-link>
-    </nav>
+   <nav class="sidebar-nav">
+    <router-link
+        to="/dashboard"
+        class="sidebar-nav-link"
+        :class="{ active: $route.path.startsWith('/dashboard') }"
+    >
+        <font-awesome-icon icon="tachometer-alt" />
+        <span>Uptime Monitor</span>
+    </router-link>
+
+    <router-link
+        to="/list"
+        class="sidebar-nav-link"
+        :class="{ active: $route.path.startsWith('/list') }"
+    >
+        <font-awesome-icon icon="list" />
+        <span>Monitors</span>
+    </router-link>
+</nav>
 
 </aside>
 

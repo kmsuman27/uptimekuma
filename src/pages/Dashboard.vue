@@ -4,7 +4,11 @@
 
             <!-- Monitor List -->
             <div
-                v-if="!$root.isMobile && $route.name !== 'DashboardHome'"
+                v-if="
+    !$root.isMobile &&
+    $route.name !== 'DashboardHome' &&
+    $route.path !== '/list'
+"
                 class="col-12 col-md-5 col-xl-4 ps-0"
             >
                 <div>
